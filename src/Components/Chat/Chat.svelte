@@ -5,6 +5,7 @@
   import RecieverMessage from "./Message/Types/recieverMessage.svelte";
   import SenderMessage from "./Message/senderMessage.svelte";
   import { afterUpdate } from "svelte";
+  import { messageLoader } from "../../store";
 
   // Scroll to the bottom of the chat container
   let chatContainer;
@@ -15,14 +16,10 @@
   }
   afterUpdate(scrollToBottom);
 
-  import { messageLoader } from "../../store";
-
   $: showLoader = $messageLoader;
 
-  
-
-
 </script>
+
 
 <main class="cs-chat" bind:this={chatContainer}>
   {#each data as item (item.id)}
@@ -37,6 +34,7 @@
   <LoaderMessage />
   {/if}
 </main>
+
 
 <style>
   .cs-chat {

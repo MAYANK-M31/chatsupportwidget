@@ -7,7 +7,6 @@
     mutation,
   } from "svelte-apollo";
   import { onMount } from "svelte";
-  
 
   import Chat from "./Components/Chat/Chat.svelte";
   import Header from "./Components/Header/Header.svelte";
@@ -46,13 +45,15 @@
       chatRoomId = JSON.parse(localStorage.getItem("chatRoomId"));
     }
 
-    // alert("ChatRoom Id: " + chatRoomId);
+    alert("ChatRoom Id: " + chatRoomId);
 
     windowWidth = window.innerWidth;
     window.addEventListener("resize", () => {
       windowWidth = window.innerWidth;
     });
   });
+
+  let oldMessage;
 
   $: {
     chatsData = query(GET_CHATS, { variables: { id: chatRoomId } });
@@ -70,33 +71,38 @@
   }
 
   $: {
-    let tempMessage = $Messagedata?.data?.newChatMessage;
-    if (tempMessage) {
-      let tempData = chatData.filter(
-        (message) => message.id !== tempMessage.id
-      );
-      chatData = [...tempData, tempMessage];
-      if (!tempMessage?.user) {
-        setTimeout(() => {
-          messageLoader.set(false);
-        }, 100);
+    if (oldMessage != $Messagedata?.data?.newChatMessage?.id) {
+      let tempMessage = $Messagedata?.data?.newChatMessage;
+      if (tempMessage) {
+        if (!tempMessage?.user) {
+          let tempData = chatData.filter(
+            (message) => message.id !== tempMessage.id
+          );
+          chatData = [...tempData, tempMessage];
+          setTimeout(() => {
+            messageLoader.set(false);
+          }, 100);
+        }
       }
+      oldMessage = tempMessage?.id;
     }
   }
 
   async function handlesendingMessage(message) {
     const sentMessage = {
-      id: uuidv4(),
+      id: Math.floor(100000 + Math.random() * 900000),
       message: message,
       user: true,
       chatRoomId: chatRoomId,
       createdAt: new Date(Date.now()),
     };
 
+    chatData = [...chatData, sentMessage];
+    messageLoader.set(true);
+
     await sendMessage({
       variables: sentMessage,
     });
-    messageLoader.set(true);
   }
 </script>
 
@@ -121,14 +127,12 @@
 {/if}
 
 <style global>
-
   :root {
     --header-height: 5em;
     --textInput-height: 4em;
   }
 
   .cs-main {
-    
     width: 370px;
     height: 80%;
     background-color: white;
@@ -142,7 +146,6 @@
     margin-right: 2em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
       Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-      
   }
 
   @media (max-width: 500px) {
