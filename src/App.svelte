@@ -7,6 +7,7 @@
     mutation,
   } from "svelte-apollo";
   import { onMount } from "svelte";
+  
 
   import Chat from "./Components/Chat/Chat.svelte";
   import Header from "./Components/Header/Header.svelte";
@@ -14,7 +15,7 @@
   import Widget from "./Components/Widget/Widget.svelte";
   import { openWidget, messageLoader } from "./store.js";
   import { v4 as uuidv4 } from "uuid";
-  import client from "./GraphQL/apollo"
+  import client from "./GraphQL/apollo";
 
   import {
     NEW_CHAT_MESSAGE,
@@ -45,6 +46,8 @@
       chatRoomId = JSON.parse(localStorage.getItem("chatRoomId"));
     }
 
+    // alert("ChatRoom Id: " + chatRoomId);
+
     windowWidth = window.innerWidth;
     window.addEventListener("resize", () => {
       windowWidth = window.innerWidth;
@@ -61,7 +64,7 @@
   }
 
   $: {
-    if($chatsData.data?.chats){
+    if ($chatsData.data?.chats) {
       chatData = $chatsData.data?.chats;
     }
   }
@@ -81,7 +84,6 @@
     }
   }
 
-  
   async function handlesendingMessage(message) {
     const sentMessage = {
       id: uuidv4(),
@@ -96,11 +98,7 @@
     });
     messageLoader.set(true);
   }
-
-
 </script>
-
-
 
 {#if widgetIsOpen}
   <main class="cs-main">
@@ -122,12 +120,15 @@
   <Widget />
 {/if}
 
-<style>
+<style global>
+
   :root {
     --header-height: 5em;
     --textInput-height: 4em;
   }
+
   .cs-main {
+    
     width: 370px;
     height: 80%;
     background-color: white;
@@ -141,6 +142,7 @@
     margin-right: 2em;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
       Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      
   }
 
   @media (max-width: 500px) {
