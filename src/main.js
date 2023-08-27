@@ -12,3 +12,4 @@ import { mountApp } from "./mountApp";
 // export default app;
 
 mountApp(document.body); // Mount the Svelte app to the body
+
